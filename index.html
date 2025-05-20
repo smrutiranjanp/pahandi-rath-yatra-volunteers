@@ -322,21 +322,36 @@
             <div class="admin-panel">
                 <div class="admin-header">
                     <h3>Admin Panel</h3>
-                    <button type="button" id="toggleAdmin" class="admin-btn">Show Registrations</button>
+                    <button type="button" id="adminLogin" class="admin-btn">Admin Login</button>
+                    <button type="button" id="adminLogout" class="admin-btn hidden" style="background: #dc3545;">Logout</button>
+                </div>
+                
+                <div id="adminLoginForm" class="hidden">
+                    <div style="margin-bottom: 20px;">
+                        <label for="adminPassword" style="display: block; margin-bottom: 10px;">Enter Admin Password:</label>
+                        <input type="password" id="adminPassword" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        <button type="button" id="loginSubmit" class="admin-btn" style="margin-top: 10px;">Login</button>
+                    </div>
                 </div>
                 
                 <div id="adminContent" class="hidden">
-                    <div class="registrations-list" id="registrationsList">
-                        <p style="text-align: center; color: #666;">No registrations yet.</p>
+                    <div style="margin-bottom: 20px;">
+                        <button type="button" id="toggleRegistrations" class="admin-btn">Show Registrations</button>
                     </div>
                     
-                    <div style="margin-top: 20px; text-align: center;">
-                        <button type="button" id="clearAll" class="admin-btn" style="background: #dc3545;">
-                            Clear All Registrations
-                        </button>
-                        <button type="button" id="exportData" class="admin-btn" style="background: #28a745; margin-left: 10px;">
-                            Export to CSV
-                        </button>
+                    <div id="registrationsPanel" class="hidden">
+                        <div class="registrations-list" id="registrationsList">
+                            <p style="text-align: center; color: #666;">No registrations yet.</p>
+                        </div>
+                        
+                        <div style="margin-top: 20px; text-align: center;">
+                            <button type="button" id="clearAll" class="admin-btn" style="background: #dc3545;">
+                                Clear All Registrations
+                            </button>
+                            <button type="button" id="exportData" class="admin-btn" style="background: #28a745; margin-left: 10px;">
+                                Export to CSV
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -348,6 +363,8 @@
             constructor() {
                 this.maxSpots = 15;
                 this.registrations = this.loadRegistrations();
+                this.adminPassword = "RathYatra@2025"; // Change this to your desired password
+                this.isAdminLoggedIn = false;
                 this.init();
             }
             
@@ -396,9 +413,19 @@
             
             bindEvents() {
                 document.getElementById('registrationForm').addEventListener('submit', (e) => this.handleSubmit(e));
-                document.getElementById('toggleAdmin').addEventListener('click', () => this.toggleAdminPanel());
+                document.getElementById('adminLogin').addEventListener('click', () => this.showAdminLogin());
+                document.getElementById('adminLogout').addEventListener('click', () => this.adminLogout());
+                document.getElementById('loginSubmit').addEventListener('click', () => this.adminLogin());
+                document.getElementById('toggleRegistrations').addEventListener('click', () => this.toggleRegistrations());
                 document.getElementById('clearAll').addEventListener('click', () => this.clearAllRegistrations());
                 document.getElementById('exportData').addEventListener('click', () => this.exportToCSV());
+                
+                // Allow login with Enter key
+                document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.adminLogin();
+                    }
+                });
                 
                 // Add click events to deity options
                 document.querySelectorAll('.deity-option').forEach(option => {
@@ -482,16 +509,65 @@
                 }, 5000);
             }
             
-            toggleAdminPanel() {
-                const adminContent = document.getElementById('adminContent');
-                const toggleBtn = document.getElementById('toggleAdmin');
+            showAdminLogin() {
+                const loginForm = document.getElementById('adminLoginForm');
+                const loginBtn = document.getElementById('adminLogin');
                 
-                if (adminContent.classList.contains('hidden')) {
-                    adminContent.classList.remove('hidden');
+                if (this.isAdminLoggedIn) {
+                    // Already logged in, show admin content directly
+                    this.showAdminContent();
+                } else {
+                    // Show login form
+                    loginForm.classList.remove('hidden');
+                    loginBtn.classList.add('hidden');
+                    document.getElementById('adminPassword').focus();
+                }
+            }
+            
+            adminLogin() {
+                const passwordInput = document.getElementById('adminPassword');
+                const enteredPassword = passwordInput.value;
+                
+                if (enteredPassword === this.adminPassword) {
+                    this.isAdminLoggedIn = true;
+                    this.showAdminContent();
+                    this.showMessage('Admin login successful!', 'success');
+                    passwordInput.value = ''; // Clear password field
+                } else {
+                    this.showMessage('Incorrect password! Access denied.', 'error');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+            
+            showAdminContent() {
+                document.getElementById('adminLoginForm').classList.add('hidden');
+                document.getElementById('adminLogin').classList.add('hidden');
+                document.getElementById('adminLogout').classList.remove('hidden');
+                document.getElementById('adminContent').classList.remove('hidden');
+                this.updateAdminPanel();
+            }
+            
+            adminLogout() {
+                this.isAdminLoggedIn = false;
+                document.getElementById('adminContent').classList.add('hidden');
+                document.getElementById('adminLoginForm').classList.add('hidden');
+                document.getElementById('registrationsPanel').classList.add('hidden');
+                document.getElementById('adminLogin').classList.remove('hidden');
+                document.getElementById('adminLogout').classList.add('hidden');
+                this.showMessage('Admin logged out successfully.', 'success');
+            }
+            
+            toggleRegistrations() {
+                const registrationsPanel = document.getElementById('registrationsPanel');
+                const toggleBtn = document.getElementById('toggleRegistrations');
+                
+                if (registrationsPanel.classList.contains('hidden')) {
+                    registrationsPanel.classList.remove('hidden');
                     toggleBtn.textContent = 'Hide Registrations';
                     this.updateAdminPanel();
                 } else {
-                    adminContent.classList.add('hidden');
+                    registrationsPanel.classList.add('hidden');
                     toggleBtn.textContent = 'Show Registrations';
                 }
             }
