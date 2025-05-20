@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pahandi-Rath Yatra Volunteers Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a56, #ff4757);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .form-container {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+        }
+        
+        .deity-selection {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .deity-option {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .deity-option:hover {
+            border-color: #ff6b35;
+            box-shadow: 0 4px 8px rgba(255, 107, 53, 0.2);
+        }
+        
+        .deity-option.disabled {
+            background: #f1f1f1;
+            border-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .deity-option.selected {
+            border-color: #ff6b35;
+            background: #fff5f0;
+        }
+        
+        .deity-label {
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+        
+        .spots-info {
+            margin-left: auto;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .spots-available {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .spots-full {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .admin-panel {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .admin-btn {
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .admin-btn:hover {
+            background: #5a6268;
+        }
+        
+        .registrations-list {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .registration-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .registration-item:last-child {
+            border-bottom: none;
+        }
+        
+        .delete-btn {
+            padding: 5px 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚩 Pahandi-Rath Yatra</h1>
+            <p>Volunteer Registration Form</p>
+        </div>
+        
+        <div class="form-container">
+            <div id="message-container"></div>
+            
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="name">Full Name <span style="color: red;">*</span></label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email ID <span style="color: red;">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number <span style="color: red;">*</span></label>
+                    <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}">
+                </div>
+                
+                <div class="form-group">
+                    <label>Select Deity <span style="color: red;">*</span></label>
+                    <div class="deity-selection">
+                        <div class="deity-option" data-deity="jagannath">
+                            <label class="deity-label">
+                                <input type="radio" name="deity" value="jagannath" required>
+                                <span>🕉️ Lord Jagannath</span>
+                                <span class="spots-info spots-available" id="jagannath-spots">15 spots available</span>
+                            </label>
+                        </div>
+                        
+                        <div class="deity-option" data-deity="balabhadra">
+                            <label class="deity-label">
+                                <input type="radio" name="deity" value="balabhadra" required>
+                                <span>💪 Lord Balabhadra</span>
+                                <span class="spots-info spots-available" id="balabhadra-spots">15 spots available</span>
+                            </label>
+                        </div>
+                        
+                        <div class="deity-option" data-deity="subhadra">
+                            <label class="deity-label">
+                                <input type="radio" name="deity" value="subhadra" required>
+                                <span>🌸 Lord Subhadra</span>
+                                <span class="spots-info spots-available" id="subhadra-spots">15 spots available</span>
+                            </label>
+                        </div>
+                        
+                        <div class="deity-option" data-deity="sudarshana">
+                            <label class="deity-label">
+                                <input type="radio" name="deity" value="sudarshana" required>
+                                <span>⚡ Lord Sudarshana</span>
+                                <span class="spots-info spots-available" id="sudarshana-spots">15 spots available</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Register as Volunteer</button>
+            </form>
+            
+            <div class="admin-panel">
+                <div class="admin-header">
+                    <h3>Admin Panel</h3>
+                    <button type="button" id="toggleAdmin" class="admin-btn">Show Registrations</button>
+                </div>
+                
+                <div id="adminContent" class="hidden">
+                    <div class="registrations-list" id="registrationsList">
+                        <p style="text-align: center; color: #666;">No registrations yet.</p>
+                    </div>
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button type="button" id="clearAll" class="admin-btn" style="background: #dc3545;">
+                            Clear All Registrations
+                        </button>
+                        <button type="button" id="exportData" class="admin-btn" style="background: #28a745; margin-left: 10px;">
+                            Export to CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class RathYatraRegistration {
+            constructor() {
+                this.maxSpots = 15;
+                this.registrations = this.loadRegistrations();
+                this.init();
+            }
+            
+            init() {
+                this.updateSpotCounts();
+                this.bindEvents();
+            }
+            
+            loadRegistrations() {
+                const saved = localStorage.getItem('rathYatraRegistrations');
+                return saved ? JSON.parse(saved) : [];
+            }
+            
+            saveRegistrations() {
+                localStorage.setItem('rathYatraRegistrations', JSON.stringify(this.registrations));
+            }
+            
+            getSpotCount(deity) {
+                return this.registrations.filter(reg => reg.deity === deity).length;
+            }
+            
+            updateSpotCounts() {
+                const deities = ['jagannath', 'balabhadra', 'subhadra', 'sudarshana'];
+                
+                deities.forEach(deity => {
+                    const count = this.getSpotCount(deity);
+                    const remaining = this.maxSpots - count;
+                    const spotElement = document.getElementById(`${deity}-spots`);
+                    const deityOption = document.querySelector(`[data-deity="${deity}"]`);
+                    const radioInput = deityOption.querySelector('input[type="radio"]');
+                    
+                    if (remaining > 0) {
+                        spotElement.textContent = `${remaining} spots left`;
+                        spotElement.className = 'spots-info spots-available';
+                        deityOption.classList.remove('disabled');
+                        radioInput.disabled = false;
+                    } else {
+                        spotElement.textContent = 'FULL';
+                        spotElement.className = 'spots-info spots-full';
+                        deityOption.classList.add('disabled');
+                        radioInput.disabled = true;
+                        radioInput.checked = false;
+                    }
+                });
+            }
+            
+            bindEvents() {
+                document.getElementById('registrationForm').addEventListener('submit', (e) => this.handleSubmit(e));
+                document.getElementById('toggleAdmin').addEventListener('click', () => this.toggleAdminPanel());
+                document.getElementById('clearAll').addEventListener('click', () => this.clearAllRegistrations());
+                document.getElementById('exportData').addEventListener('click', () => this.exportToCSV());
+                
+                // Add click events to deity options
+                document.querySelectorAll('.deity-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        if (!option.classList.contains('disabled')) {
+                            const radio = option.querySelector('input[type="radio"]');
+                            radio.checked = true;
+                            
+                            // Update visual selection
+                            document.querySelectorAll('.deity-option').forEach(opt => opt.classList.remove('selected'));
+                            option.classList.add('selected');
+                        }
+                    });
+                });
+            }
+            
+            handleSubmit(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const registration = {
+                    id: Date.now(),
+                    name: formData.get('name').trim(),
+                    email: formData.get('email').trim(),
+                    phone: formData.get('phone').trim(),
+                    deity: formData.get('deity'),
+                    timestamp: new Date().toLocaleString()
+                };
+                
+                // Validate phone number
+                const phoneRegex = /^[0-9]{10}$/;
+                if (!phoneRegex.test(registration.phone)) {
+                    this.showMessage('Please enter a valid 10-digit phone number.', 'error');
+                    return;
+                }
+                
+                // Check if email already exists
+                if (this.registrations.some(reg => reg.email === registration.email)) {
+                    this.showMessage('This email is already registered!', 'error');
+                    return;
+                }
+                
+                // Check if spots are available
+                const currentCount = this.getSpotCount(registration.deity);
+                if (currentCount >= this.maxSpots) {
+                    this.showMessage('Sorry, all spots for this deity are full!', 'error');
+                    return;
+                }
+                
+                // Add registration
+                this.registrations.push(registration);
+                this.saveRegistrations();
+                this.updateSpotCounts();
+                this.updateAdminPanel();
+                
+                // Show success message
+                const deityNames = {
+                    jagannath: 'Lord Jagannath',
+                    balabhadra: 'Lord Balabhadra',
+                    subhadra: 'Lord Subhadra',
+                    sudarshana: 'Lord Sudarshana'
+                };
+                
+                this.showMessage(
+                    `Registration successful! Welcome to ${deityNames[registration.deity]} volunteer team. You will receive a confirmation email shortly.`,
+                    'success'
+                );
+                
+                // Reset form
+                e.target.reset();
+                document.querySelectorAll('.deity-option').forEach(opt => opt.classList.remove('selected'));
+            }
+            
+            showMessage(message, type) {
+                const container = document.getElementById('message-container');
+                container.innerHTML = `<div class="${type}-message">${message}</div>`;
+                
+                // Auto-remove message after 5 seconds
+                setTimeout(() => {
+                    container.innerHTML = '';
+                }, 5000);
+            }
+            
+            toggleAdminPanel() {
+                const adminContent = document.getElementById('adminContent');
+                const toggleBtn = document.getElementById('toggleAdmin');
+                
+                if (adminContent.classList.contains('hidden')) {
+                    adminContent.classList.remove('hidden');
+                    toggleBtn.textContent = 'Hide Registrations';
+                    this.updateAdminPanel();
+                } else {
+                    adminContent.classList.add('hidden');
+                    toggleBtn.textContent = 'Show Registrations';
+                }
+            }
+            
+            updateAdminPanel() {
+                const container = document.getElementById('registrationsList');
+                
+                if (this.registrations.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666;">No registrations yet.</p>';
+                    return;
+                }
+                
+                const deityNames = {
+                    jagannath: 'Lord Jagannath',
+                    balabhadra: 'Lord Balabhadra',
+                    subhadra: 'Lord Subhadra',
+                    sudarshana: 'Lord Sudarshana'
+                };
+                
+                const html = this.registrations.map(reg => `
+                    <div class="registration-item">
+                        <div>
+                            <strong>${reg.name}</strong><br>
+                            <small>${reg.email} | ${reg.phone}</small><br>
+                            <small><strong>${deityNames[reg.deity]}</strong> | ${reg.timestamp}</small>
+                        </div>
+                        <button class="delete-btn" onclick="app.deleteRegistration(${reg.id})">Delete</button>
+                    </div>
+                `).join('');
+                
+                container.innerHTML = html;
+            }
+            
+            deleteRegistration(id) {
+                if (confirm('Are you sure you want to delete this registration?')) {
+                    this.registrations = this.registrations.filter(reg => reg.id !== id);
+                    this.saveRegistrations();
+                    this.updateSpotCounts();
+                    this.updateAdminPanel();
+                }
+            }
+            
+            clearAllRegistrations() {
+                if (confirm('Are you sure you want to clear ALL registrations? This action cannot be undone.')) {
+                    this.registrations = [];
+                    this.saveRegistrations();
+                    this.updateSpotCounts();
+                    this.updateAdminPanel();
+                    this.showMessage('All registrations have been cleared.', 'success');
+                }
+            }
+            
+            exportToCSV() {
+                if (this.registrations.length === 0) {
+                    alert('No registrations to export.');
+                    return;
+                }
+                
+                const headers = ['Name', 'Email', 'Phone', 'Deity', 'Registration Time'];
+                const deityNames = {
+                    jagannath: 'Lord Jagannath',
+                    balabhadra: 'Lord Balabhadra',
+                    subhadra: 'Lord Subhadra',
+                    sudarshana: 'Lord Sudarshana'
+                };
+                
+                const csvContent = [
+                    headers.join(','),
+                    ...this.registrations.map(reg => [
+                        reg.name,
+                        reg.email,
+                        reg.phone,
+                        deityNames[reg.deity],
+                        reg.timestamp
+                    ].join(','))
+                ].join('\n');
+                
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `rath-yatra-registrations-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            }
+        }
+        
+        // Initialize the application
+        const app = new RathYatraRegistration();
+    </script>
+</body>
+</html>
