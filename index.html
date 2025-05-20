@@ -251,6 +251,32 @@
             margin-bottom: 20px;
             border: 1px solid #f5c6cb;
         }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .storage-status {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .storage-online {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .storage-offline {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -261,6 +287,7 @@
         </div>
         
         <div class="form-container">
+            <div id="storage-status" class="storage-status hidden"></div>
             <div id="message-container"></div>
             
             <form id="registrationForm">
@@ -286,7 +313,7 @@
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="jagannath" required>
                                 <span>🕉️ Lord Jagannath</span>
-                                <span class="spots-info spots-available" id="jagannath-spots">15 spots available</span>
+                                <span class="spots-info spots-available" id="jagannath-spots">Loading...</span>
                             </label>
                         </div>
                         
@@ -294,7 +321,7 @@
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="balabhadra" required>
                                 <span>💪 Lord Balabhadra</span>
-                                <span class="spots-info spots-available" id="balabhadra-spots">15 spots available</span>
+                                <span class="spots-info spots-available" id="balabhadra-spots">Loading...</span>
                             </label>
                         </div>
                         
@@ -302,7 +329,7 @@
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="subhadra" required>
                                 <span>🌸 Lord Subhadra</span>
-                                <span class="spots-info spots-available" id="subhadra-spots">15 spots available</span>
+                                <span class="spots-info spots-available" id="subhadra-spots">Loading...</span>
                             </label>
                         </div>
                         
@@ -310,7 +337,7 @@
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="sudarshana" required>
                                 <span>⚡ Lord Sudarshana</span>
-                                <span class="spots-info spots-available" id="sudarshana-spots">15 spots available</span>
+                                <span class="spots-info spots-available" id="sudarshana-spots">Loading...</span>
                             </label>
                         </div>
                     </div>
@@ -337,11 +364,12 @@
                 <div id="adminContent" class="hidden">
                     <div style="margin-bottom: 20px;">
                         <button type="button" id="toggleRegistrations" class="admin-btn">Show Registrations</button>
+                        <button type="button" id="refreshData" class="admin-btn" style="background: #17a2b8; margin-left: 10px;">Refresh Data</button>
                     </div>
                     
                     <div id="registrationsPanel" class="hidden">
                         <div class="registrations-list" id="registrationsList">
-                            <p style="text-align: center; color: #666;">No registrations yet.</p>
+                            <div class="loading">Loading registrations...</div>
                         </div>
                         
                         <div style="margin-top: 20px; text-align: center;">
@@ -362,24 +390,95 @@
         class RathYatraRegistration {
             constructor() {
                 this.maxSpots = 15;
-                this.registrations = this.loadRegistrations();
-                this.adminPassword = "RathYatra@2025"; // Change this to your desired password
+                this.adminPassword = "RathYatra@2025";
                 this.isAdminLoggedIn = false;
+                
+                // Using jsonbin.io as free cloud storage
+                this.apiConfig = {
+                    binId: '682bf5668960c979a59d4ee7', // Replace with your bin ID
+                    apiKey: '$2a$10$jdWCjE2L91c5w4HsjMiZA.WfXDatKbLz93Lfdg2booiJbkWlWGElS', // Replace with your API key
+                    baseUrl: 'https://api.jsonbin.io/v3'
+                };
+                
+                this.registrations = [];
+                this.storageOnline = false;
                 this.init();
             }
             
-            init() {
+            async init() {
+                await this.loadRegistrations();
                 this.updateSpotCounts();
                 this.bindEvents();
+                this.updateStorageStatus();
             }
             
-            loadRegistrations() {
-                const saved = localStorage.getItem('rathYatraRegistrations');
-                return saved ? JSON.parse(saved) : [];
+            async loadRegistrations() {
+                try {
+                    // Try to load from cloud storage first
+                    const response = await fetch(`${this.apiConfig.baseUrl}/b/${this.apiConfig.binId}/latest`, {
+                        headers: {
+                            'X-Master-Key': this.apiConfig.apiKey
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.registrations = data.record.registrations || [];
+                        this.storageOnline = true;
+                    } else {
+                        throw new Error('Failed to load from cloud');
+                    }
+                } catch (error) {
+                    console.log('Cloud storage unavailable, using localStorage');
+                    this.storageOnline = false;
+                    // Fallback to localStorage
+                    const saved = localStorage.getItem('rathYatraRegistrations');
+                    this.registrations = saved ? JSON.parse(saved) : [];
+                }
             }
             
-            saveRegistrations() {
+            async saveRegistrations() {
+                // Always save to localStorage as backup
                 localStorage.setItem('rathYatraRegistrations', JSON.stringify(this.registrations));
+                
+                try {
+                    // Try to save to cloud storage
+                    const response = await fetch(`${this.apiConfig.baseUrl}/b/${this.apiConfig.binId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': this.apiConfig.apiKey
+                        },
+                        body: JSON.stringify({
+                            registrations: this.registrations,
+                            lastUpdated: new Date().toISOString()
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        this.storageOnline = true;
+                    } else {
+                        throw new Error('Failed to save to cloud');
+                    }
+                } catch (error) {
+                    console.log('Failed to save to cloud, data saved locally');
+                    this.storageOnline = false;
+                }
+                
+                this.updateStorageStatus();
+            }
+            
+            updateStorageStatus() {
+                const statusElement = document.getElementById('storage-status');
+                statusElement.classList.remove('hidden');
+                
+                if (this.storageOnline) {
+                    statusElement.className = 'storage-status storage-online';
+                    statusElement.textContent = '✅ Data synced across all devices';
+                } else {
+                    statusElement.className = 'storage-status storage-offline';
+                    statusElement.textContent = '⚠️ Using local storage only - data specific to this device';
+                }
             }
             
             getSpotCount(deity) {
@@ -417,6 +516,7 @@
                 document.getElementById('adminLogout').addEventListener('click', () => this.adminLogout());
                 document.getElementById('loginSubmit').addEventListener('click', () => this.adminLogin());
                 document.getElementById('toggleRegistrations').addEventListener('click', () => this.toggleRegistrations());
+                document.getElementById('refreshData').addEventListener('click', () => this.refreshData());
                 document.getElementById('clearAll').addEventListener('click', () => this.clearAllRegistrations());
                 document.getElementById('exportData').addEventListener('click', () => this.exportToCSV());
                 
@@ -442,7 +542,7 @@
                 });
             }
             
-            handleSubmit(e) {
+            async handleSubmit(e) {
                 e.preventDefault();
                 
                 const formData = new FormData(e.target);
@@ -475,9 +575,15 @@
                     return;
                 }
                 
+                // Show loading state
+                const submitBtn = e.target.querySelector('.submit-btn');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Registering...';
+                submitBtn.disabled = true;
+                
                 // Add registration
                 this.registrations.push(registration);
-                this.saveRegistrations();
+                await this.saveRegistrations();
                 this.updateSpotCounts();
                 this.updateAdminPanel();
                 
@@ -490,13 +596,17 @@
                 };
                 
                 this.showMessage(
-                    `Registration successful! Welcome to ${deityNames[registration.deity]} volunteer team. You will receive a confirmation email shortly.`,
+                    `Registration successful! Welcome to ${deityNames[registration.deity]} volunteer team.`,
                     'success'
                 );
                 
                 // Reset form
                 e.target.reset();
                 document.querySelectorAll('.deity-option').forEach(opt => opt.classList.remove('selected'));
+                
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
             
             showMessage(message, type) {
@@ -514,10 +624,8 @@
                 const loginBtn = document.getElementById('adminLogin');
                 
                 if (this.isAdminLoggedIn) {
-                    // Already logged in, show admin content directly
                     this.showAdminContent();
                 } else {
-                    // Show login form
                     loginForm.classList.remove('hidden');
                     loginBtn.classList.add('hidden');
                     document.getElementById('adminPassword').focus();
@@ -532,7 +640,7 @@
                     this.isAdminLoggedIn = true;
                     this.showAdminContent();
                     this.showMessage('Admin login successful!', 'success');
-                    passwordInput.value = ''; // Clear password field
+                    passwordInput.value = '';
                 } else {
                     this.showMessage('Incorrect password! Access denied.', 'error');
                     passwordInput.value = '';
@@ -572,6 +680,21 @@
                 }
             }
             
+            async refreshData() {
+                const refreshBtn = document.getElementById('refreshData');
+                const originalText = refreshBtn.textContent;
+                refreshBtn.textContent = 'Refreshing...';
+                refreshBtn.disabled = true;
+                
+                await this.loadRegistrations();
+                this.updateSpotCounts();
+                this.updateAdminPanel();
+                this.showMessage('Data refreshed successfully!', 'success');
+                
+                refreshBtn.textContent = originalText;
+                refreshBtn.disabled = false;
+            }
+            
             updateAdminPanel() {
                 const container = document.getElementById('registrationsList');
                 
@@ -587,7 +710,10 @@
                     sudarshana: 'Lord Sudarshana'
                 };
                 
-                const html = this.registrations.map(reg => `
+                // Sort by timestamp (newest first)
+                const sortedRegistrations = [...this.registrations].sort((a, b) => b.id - a.id);
+                
+                const html = sortedRegistrations.map(reg => `
                     <div class="registration-item">
                         <div>
                             <strong>${reg.name}</strong><br>
@@ -601,19 +727,20 @@
                 container.innerHTML = html;
             }
             
-            deleteRegistration(id) {
+            async deleteRegistration(id) {
                 if (confirm('Are you sure you want to delete this registration?')) {
                     this.registrations = this.registrations.filter(reg => reg.id !== id);
-                    this.saveRegistrations();
+                    await this.saveRegistrations();
                     this.updateSpotCounts();
                     this.updateAdminPanel();
+                    this.showMessage('Registration deleted successfully.', 'success');
                 }
             }
             
-            clearAllRegistrations() {
+            async clearAllRegistrations() {
                 if (confirm('Are you sure you want to clear ALL registrations? This action cannot be undone.')) {
                     this.registrations = [];
-                    this.saveRegistrations();
+                    await this.saveRegistrations();
                     this.updateSpotCounts();
                     this.updateAdminPanel();
                     this.showMessage('All registrations have been cleared.', 'success');
