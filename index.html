@@ -439,10 +439,23 @@
             }
             
             async init() {
+                // Show initial spot counts immediately
+                this.showInitialSpotCounts();
                 await this.loadRegistrations();
                 this.updateSpotCounts();
                 this.bindEvents();
                 this.updateStorageStatus();
+            }
+            
+            showInitialSpotCounts() {
+                // Show initial available spots before loading data
+                const deities = ['jagannath', 'balabhadra', 'subhadra', 'sudarshana', 'ghanta'];
+                deities.forEach(deity => {
+                    const spotElement = document.getElementById(`${deity}-spots`);
+                    const maxSpotsForDeity = this.maxSpots[deity];
+                    spotElement.textContent = `${maxSpotsForDeity} spots left`;
+                    spotElement.className = 'spots-info spots-available';
+                });
             }
             
             async loadRegistrations() {
