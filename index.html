@@ -410,7 +410,19 @@
     <script>
         class RathYatraRegistration {
             constructor() {
-                this.maxSpots = 12;
+                // ========================================
+                // CUSTOM SLOT LIMITS FOR EACH DEITY/VOLUNTEER TYPE
+                // ========================================
+                // You can easily modify these numbers as per your requirements
+                this.maxSpots = {
+                    jagannath: 20,      // Lord Jagannath - 20 slots
+                    balabhadra: 18,     // Lord Balabhadra - 18 slots  
+                    subhadra: 15,       // Lord Subhadra (Female Only) - 15 slots
+                    sudarshana: 10,     // Lord Sudarshana (Kids Only) - 10 slots
+                    ghanta: 12          // Ghanta Volunteer - 12 slots
+                };
+                // ========================================
+                
                 this.adminPassword = "RathYatra@2025";
                 this.isAdminLoggedIn = false;
                 
@@ -427,10 +439,23 @@
             }
             
             async init() {
+                // Show initial spot counts immediately
+                this.showInitialSpotCounts();
                 await this.loadRegistrations();
                 this.updateSpotCounts();
                 this.bindEvents();
                 this.updateStorageStatus();
+            }
+            
+            showInitialSpotCounts() {
+                // Show initial available spots before loading data
+                const deities = ['jagannath', 'balabhadra', 'subhadra', 'sudarshana', 'ghanta'];
+                deities.forEach(deity => {
+                    const spotElement = document.getElementById(`${deity}-spots`);
+                    const maxSpotsForDeity = this.maxSpots[deity];
+                    spotElement.textContent = `${maxSpotsForDeity} spots left`;
+                    spotElement.className = 'spots-info spots-available';
+                });
             }
             
             async loadRegistrations() {
@@ -511,7 +536,8 @@
                 
                 deities.forEach(deity => {
                     const count = this.getSpotCount(deity);
-                    const remaining = this.maxSpots - count;
+                    const maxSpotsForDeity = this.maxSpots[deity];
+                    const remaining = maxSpotsForDeity - count;
                     const spotElement = document.getElementById(`${deity}-spots`);
                     const deityOption = document.querySelector(`[data-deity="${deity}"]`);
                     const radioInput = deityOption.querySelector('input[type="radio"]');
@@ -589,9 +615,11 @@
                     return;
                 }
                 
-                // Check if spots are available
+                // Check if spots are available using custom limits
                 const currentCount = this.getSpotCount(registration.deity);
-                if (currentCount >= this.maxSpots) {
+                const maxSpotsForDeity = this.maxSpots[registration.deity];
+                
+                if (currentCount >= maxSpotsForDeity) {
                     this.showMessage('Sorry, all spots for this deity are full!', 'error');
                     return;
                 }
@@ -618,7 +646,7 @@
                 };
                 
                 this.showMessage(
-                    `Registration successful! Welcome to ${deityNames[registration.deity]} volunteer team.`,
+                    `Registration successful! Welcome to ${deityNames[registration.deity]} team.`,
                     'success'
                 );
                 
