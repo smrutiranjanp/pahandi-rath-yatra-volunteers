@@ -325,7 +325,8 @@
                         <div class="deity-option" data-deity="jagannath">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="jagannath" required>
-                                <span>🕉️ Lord Jagannath</span>
+                                <span style="color: #FFD700;">🕉️ Lord Jagannath</span>
+                                <small style="color: #666; margin-left: 10px;">(Total: 20 slots)</small>
                                 <span class="spots-info spots-available" id="jagannath-spots">Loading...</span>
                             </label>
                         </div>
@@ -333,7 +334,8 @@
                         <div class="deity-option" data-deity="balabhadra">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="balabhadra" required>
-                                <span>🕉️ Lord Balabhadra</span>
+                                <span style="color: #32CD32;">🕉️ Lord Balabhadra</span>
+                                <small style="color: #666; margin-left: 10px;">(Total: 18 slots)</small>
                                 <span class="spots-info spots-available" id="balabhadra-spots">Loading...</span>
                             </label>
                         </div>
@@ -341,7 +343,8 @@
                         <div class="deity-option" data-deity="subhadra">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="subhadra" required>
-                                <span>🕉️ Lord Subhadra (Female Volunteers Only)</span>
+                                <span style="color: #DC143C;">🕉️ Lord Subhadra (Female Volunteers Only)</span>
+                                <small style="color: #666; margin-left: 10px;">(Total: 15 slots)</small>
                                 <span class="spots-info spots-available" id="subhadra-spots">Loading...</span>
                             </label>
                         </div>
@@ -349,7 +352,8 @@
                         <div class="deity-option" data-deity="sudarshana">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="sudarshana" required>
-                                <span>🕉️ Lord Sudarshana (Kids Only)</span>
+                                <span style="color: #4169E1;">🕉️ Lord Sudarshana (Kids Only)</span>
+                                <small style="color: #666; margin-left: 10px;">(Total: 10 slots)</small>
                                 <span class="spots-info spots-available" id="sudarshana-spots">Loading...</span>
                             </label>
                         </div>
@@ -357,7 +361,8 @@
                         <div class="deity-option" data-deity="ghanta">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="ghanta" required>
-                                <span>🔔 Ghanta Volunteer</span>
+                                <span style="color: #FF8C00;">🔔 Ghanta Volunteer</span>
+                                <small style="color: #666; margin-left: 10px;">(Total: 12 slots)</small>
                                 <span class="spots-info spots-available" id="ghanta-spots">Loading...</span>
                             </label>
                         </div>
@@ -410,14 +415,18 @@
     <script>
         class RathYatraRegistration {
             constructor() {
-                // Custom spot limits for each deity
+                // ========================================
+                // CUSTOM SLOT LIMITS FOR EACH DEITY/VOLUNTEER TYPE
+                // ========================================
+                // You can easily modify these numbers as per your requirements
                 this.maxSpots = {
-                    jagannath: 16,
-                    balabhadra: 15,
-                    subhadra: 12,
-                    sudarshana: 12,
-                    ghanta: 9
+                    jagannath: 20,      // Lord Jagannath - 20 slots
+                    balabhadra: 18,     // Lord Balabhadra - 18 slots  
+                    subhadra: 15,       // Lord Subhadra (Female Only) - 15 slots
+                    sudarshana: 10,     // Lord Sudarshana (Kids Only) - 10 slots
+                    ghanta: 12          // Ghanta Volunteer - 12 slots
                 };
+                // ========================================
                 
                 this.adminPassword = "RathYatra@2025";
                 this.isAdminLoggedIn = false;
@@ -526,12 +535,12 @@
                     const radioInput = deityOption.querySelector('input[type="radio"]');
                     
                     if (remaining > 0) {
-                        spotElement.textContent = `${remaining} spots left`;
+                        spotElement.textContent = `${remaining}/${maxSpotsForDeity} available`;
                         spotElement.className = 'spots-info spots-available';
                         deityOption.classList.remove('disabled');
                         radioInput.disabled = false;
                     } else {
-                        spotElement.textContent = 'FULL';
+                        spotElement.textContent = `FULL (${maxSpotsForDeity}/${maxSpotsForDeity})`;
                         spotElement.className = 'spots-info spots-full';
                         deityOption.classList.add('disabled');
                         radioInput.disabled = true;
