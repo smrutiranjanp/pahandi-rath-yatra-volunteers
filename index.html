@@ -325,7 +325,7 @@
                         <div class="deity-option" data-deity="jagannath">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="jagannath" required>
-                                <span style="color: yellow;">🕉️ Lord Jagannath</span>
+                                <span>🕉️ Lord Jagannath</span>
                                 <span class="spots-info spots-available" id="jagannath-spots">Loading...</span>
                             </label>
                         </div>
@@ -333,7 +333,7 @@
                         <div class="deity-option" data-deity="balabhadra">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="balabhadra" required>
-                                <span style="color: green;">🕉️ Lord Balabhadra</span>
+                                <span>🕉️ Lord Balabhadra</span>
                                 <span class="spots-info spots-available" id="balabhadra-spots">Loading...</span>
                             </label>
                         </div>
@@ -341,7 +341,7 @@
                         <div class="deity-option" data-deity="subhadra">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="subhadra" required>
-                                <span style="color: red;">🕉️ Lord Subhadra(Female Voulnteers Only)</span>
+                                <span>🕉️ Lord Subhadra (Female Volunteers Only)</span>
                                 <span class="spots-info spots-available" id="subhadra-spots">Loading...</span>
                             </label>
                         </div>
@@ -349,8 +349,16 @@
                         <div class="deity-option" data-deity="sudarshana">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="sudarshana" required>
-                                <span>🕉️ Lord Sudarshana(Kids Only)</span>
+                                <span>🕉️ Lord Sudarshana (Kids Only)</span>
                                 <span class="spots-info spots-available" id="sudarshana-spots">Loading...</span>
+                            </label>
+                        </div>
+                        
+                        <div class="deity-option" data-deity="ghanta">
+                            <label class="deity-label">
+                                <input type="radio" name="deity" value="ghanta" required>
+                                <span>🔔 Ghanta Volunteer</span>
+                                <span class="spots-info spots-available" id="ghanta-spots">Loading...</span>
                             </label>
                         </div>
                     </div>
@@ -402,7 +410,15 @@
     <script>
         class RathYatraRegistration {
             constructor() {
-                this.maxSpots = 12;
+                // Custom spot limits for each deity
+                this.maxSpots = {
+                    jagannath: 16,
+                    balabhadra: 15,
+                    subhadra: 12,
+                    sudarshana: 12,
+                    ghanta: 9
+                };
+                
                 this.adminPassword = "RathYatra@2025";
                 this.isAdminLoggedIn = false;
                 
@@ -499,11 +515,12 @@
             }
             
             updateSpotCounts() {
-                const deities = ['jagannath', 'balabhadra', 'subhadra', 'sudarshana'];
+                const deities = ['jagannath', 'balabhadra', 'subhadra', 'sudarshana', 'ghanta'];
                 
                 deities.forEach(deity => {
                     const count = this.getSpotCount(deity);
-                    const remaining = this.maxSpots - count;
+                    const maxSpotsForDeity = this.maxSpots[deity];
+                    const remaining = maxSpotsForDeity - count;
                     const spotElement = document.getElementById(`${deity}-spots`);
                     const deityOption = document.querySelector(`[data-deity="${deity}"]`);
                     const radioInput = deityOption.querySelector('input[type="radio"]');
@@ -581,9 +598,11 @@
                     return;
                 }
                 
-                // Check if spots are available
+                // Check if spots are available using custom limits
                 const currentCount = this.getSpotCount(registration.deity);
-                if (currentCount >= this.maxSpots) {
+                const maxSpotsForDeity = this.maxSpots[registration.deity];
+                
+                if (currentCount >= maxSpotsForDeity) {
                     this.showMessage('Sorry, all spots for this deity are full!', 'error');
                     return;
                 }
@@ -605,11 +624,12 @@
                     jagannath: 'Lord Jagannath',
                     balabhadra: 'Lord Balabhadra',
                     subhadra: 'Lord Subhadra',
-                    sudarshana: 'Lord Sudarshana'
+                    sudarshana: 'Lord Sudarshana',
+                    ghanta: 'Ghanta Volunteer'
                 };
                 
                 this.showMessage(
-                    `Registration successful! Welcome to ${deityNames[registration.deity]} volunteer team.`,
+                    `Registration successful! Welcome to ${deityNames[registration.deity]} team.`,
                     'success'
                 );
                 
@@ -720,7 +740,8 @@
                     jagannath: 'Lord Jagannath',
                     balabhadra: 'Lord Balabhadra',
                     subhadra: 'Lord Subhadra',
-                    sudarshana: 'Lord Sudarshana'
+                    sudarshana: 'Lord Sudarshana',
+                    ghanta: 'Ghanta Volunteer'
                 };
                 
                 // Sort by timestamp (newest first)
@@ -771,7 +792,8 @@
                     jagannath: 'Lord Jagannath',
                     balabhadra: 'Lord Balabhadra',
                     subhadra: 'Lord Subhadra',
-                    sudarshana: 'Lord Sudarshana'
+                    sudarshana: 'Lord Sudarshana',
+                    ghanta: 'Ghanta Volunteer'
                 };
                 
                 const csvContent = [
@@ -796,7 +818,4 @@
         }
         
         // Initialize the application
-        const app = new RathYatraRegistration();
-    </script>
-</body>
-</html>
+        const app = new Rath
