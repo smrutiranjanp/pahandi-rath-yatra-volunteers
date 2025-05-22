@@ -326,7 +326,6 @@
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="jagannath" required>
                                 <span style="color: #FFD700;">🕉️ Lord Jagannath</span>
-                                <small style="color: #666; margin-left: 10px;">(Total: 20 slots)</small>
                                 <span class="spots-info spots-available" id="jagannath-spots">Loading...</span>
                             </label>
                         </div>
@@ -335,7 +334,6 @@
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="balabhadra" required>
                                 <span style="color: #32CD32;">🕉️ Lord Balabhadra</span>
-                                <small style="color: #666; margin-left: 10px;">(Total: 18 slots)</small>
                                 <span class="spots-info spots-available" id="balabhadra-spots">Loading...</span>
                             </label>
                         </div>
@@ -344,7 +342,6 @@
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="subhadra" required>
                                 <span style="color: #DC143C;">🕉️ Lord Subhadra (Female Volunteers Only)</span>
-                                <small style="color: #666; margin-left: 10px;">(Total: 15 slots)</small>
                                 <span class="spots-info spots-available" id="subhadra-spots">Loading...</span>
                             </label>
                         </div>
@@ -353,7 +350,6 @@
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="sudarshana" required>
                                 <span style="color: #4169E1;">🕉️ Lord Sudarshana (Kids Only)</span>
-                                <small style="color: #666; margin-left: 10px;">(Total: 10 slots)</small>
                                 <span class="spots-info spots-available" id="sudarshana-spots">Loading...</span>
                             </label>
                         </div>
@@ -362,7 +358,6 @@
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="ghanta" required>
                                 <span style="color: #FF8C00;">🔔 Ghanta Volunteer</span>
-                                <small style="color: #666; margin-left: 10px;">(Total: 12 slots)</small>
                                 <span class="spots-info spots-available" id="ghanta-spots">Loading...</span>
                             </label>
                         </div>
@@ -535,12 +530,12 @@
                     const radioInput = deityOption.querySelector('input[type="radio"]');
                     
                     if (remaining > 0) {
-                        spotElement.textContent = `${remaining}/${maxSpotsForDeity} available`;
+                        spotElement.textContent = `${remaining} spots left`;
                         spotElement.className = 'spots-info spots-available';
                         deityOption.classList.remove('disabled');
                         radioInput.disabled = false;
                     } else {
-                        spotElement.textContent = `FULL (${maxSpotsForDeity}/${maxSpotsForDeity})`;
+                        spotElement.textContent = 'FULL';
                         spotElement.className = 'spots-info spots-full';
                         deityOption.classList.add('disabled');
                         radioInput.disabled = true;
