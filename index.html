@@ -291,9 +291,64 @@
         border: 1px solid #ccc;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+        /* Main background with Jagannath chariot pattern */
+.jagannath-background {
+    background-color: #FFF8DC; /* Cornsilk - warm cream base */
+    background-image: url('jagannath-chariot.png'); /* Replace with your image path */
+    background-repeat: repeat;
+    background-size: 100px auto; /* Adjust size as needed */
+    background-position: center;
+    background-attachment: scroll;
+    min-height: 100vh;
+}
+
+/* Alternative: Subtle pattern with opacity overlay */
+.jagannath-background-subtle {
+    background: 
+        linear-gradient(rgba(255, 248, 220, 0.85), rgba(255, 248, 220, 0.85)),
+        url('jagannath-chariot.png');
+    background-color: #FFF8DC;
+    background-repeat: repeat;
+    background-size: 180px auto;
+    background-position: center;
+    background-attachment: scroll;
+    min-height: 100vh;
+}
+
+/* Scattered pattern - less dense */
+.jagannath-scattered {
+    background-color: #FDF5E6; /* Old lace */
+    background-image: url('jagannath-chariot.png');
+    background-repeat: repeat;
+    background-size: 250px auto;
+    background-position: 0 0, 125px 150px; /* Offset for scattered effect */
+    min-height: 100vh;
+}
+
+/* Fixed background for parallax effect */
+.jagannath-fixed {
+    background-color: #F5F5DC; /* Beige */
+    background-image: url('jagannath-chariot.png');
+    background-repeat: repeat;
+    background-size: 220px auto;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+/* Large pattern for minimal repetition */
+.jagannath-large {
+    background-color: #FFEFD5; /* Papaya whip */
+    background-image: url('jagannath-chariot.png');
+    background-repeat: repeat;
+    background-size: 300px auto;
+    background-position: center;
+    background-attachment: scroll;
+    min-height: 100vh;
+}
     </style>
 </head>
-<body>
+<body class="jagannath-background">
     <div class="container">
         <div class="header">
             <img src="lordjg.jpg" alt="Rath Yatra Banner" class="" style="
