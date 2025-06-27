@@ -394,7 +394,7 @@
                             </label>
                         </div>
                         
-                        <div class="deity-option disabled" data-deity="balabhadra">
+                        <div class="deity-option" data-deity="balabhadra">
                             <label class="deity-label">
                                 <input type="radio" name="deity" value="balabhadra" required>
                                 <span style="color: #32CD32;">🕉️ Lord Balabhadra</span>
@@ -513,7 +513,7 @@
             
             showInitialSpotCounts() {
                 // Show initial available spots before loading data
-                const deities = ['jagannath', 'balabhadra', 'subhadra', 'sudarshana', 'ghanta'];
+                const deities = ['jagannath', 'subhadra', 'sudarshana', 'ghanta'];
                 deities.forEach(deity => {
                     const spotElement = document.getElementById(`${deity}-spots`);
                     const maxSpotsForDeity = this.maxSpots[deity];
